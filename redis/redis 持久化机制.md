@@ -23,43 +23,43 @@ dir ./
 
 #### 触发快照的时机
 
-- 执行 ==save== 和 ==bgsave== 命令
-- 配置文件设置 ==save <seconds> <changes>== 规则，自动间隔性 ==bgsave== 命令。 
-- 主从复制时，从库全量复制同步主库数据，主库会执行 ==bgsave==。
-- 执行 ==flushall== 命令清空服务器数据
-- 执行 ==shutdown== 命令关闭 Redis 时，会执行 ==save== 命令。
+- 执行 `save` 和 `bgsave` 命令
+- 配置文件设置 `save <seconds> <changes>` 规则，自动间隔性 `bgsave` 命令。 
+- 主从复制时，从库全量复制同步主库数据，主库会执行 `bgsave`。
+- 执行 `flushall` 命令清空服务器数据
+- 执行 `shutdown` 命令关闭 Redis 时，会执行 `save` 命令。
 
 
 
 #### save和bgsave命令
 
-执行 ==save== 和 ==bgsave== 命令，可以手动触发快照，生成 RDB 文件，两者的区别如下。
+执行 `save` 和 `bgsave` 命令，可以手动触发快照，生成 RDB 文件，两者的区别如下。
 
-- 使用 ==save== 命令会阻塞 Redis 服务器进行，服务器进程在 RDB 文件创建完成之前是不能处理任何的命令请求。
+- 使用 `save` 命令会阻塞 Redis 服务器进行，服务器进程在 RDB 文件创建完成之前是不能处理任何的命令请求。
 
   ```properties
   127.0.0.1:6379> save
   OK
   ```
 
-- 使用 ==bgsave== 命令会 ==fork== 一个子进程，然后该紫禁城会负责创建 RDB 文件，而服务器进程会继续处理命令请求。
+- 使用 `bgsave` 命令会 `fork` 一个子进程，然后该紫禁城会负责创建 RDB 文件，而服务器进程会继续处理命令请求。
 
   ```properties
   127.0.0.1:6379> bgsave
   Background saving started
   ```
 
-  > **==fork()== 是由操作系统提供的函数，作用是创建当前进程的一个副本作为子进程。**
+  > **`fork()` 是由操作系统提供的函数，作用是创建当前进程的一个副本作为子进程。**
 
   
 
-  > **==fork()== 一个子进程，子进程会把数据集先写入临时文件，写入成功之后，再替换之前的 RDB 文件，用二进制压缩存储，这样可以保证 RDB 文件始终存储的是完整的持久化内容。**
+  > **`fork()` 一个子进程，子进程会把数据集先写入临时文件，写入成功之后，再替换之前的 RDB 文件，用二进制压缩存储，这样可以保证 RDB 文件始终存储的是完整的持久化内容。**
 
   
 
 #### 自动间隔触发
 
-在配置文件中设置 `save <seconds> <changes>` 规则，可以自动间隔性执行 ==bgsave== 命令。
+在配置文件中设置 `save <seconds> <changes>` 规则，可以自动间隔性执行 `bgsave` 命令。
 
 ```properties
 save 900 1
@@ -77,7 +77,7 @@ AOF 持久化会把被执行的写命令写道 AOF 文件的末尾，记录数�
 
 ### AOF 参数
 
-可以通过配置 ==redis.conf== 文件开启 AOF 持久化。
+可以通过配置 `redis.conf` 文件开启 AOF 持久化。
 
 ```properties
 # appendonly 参数开启文件持久化
@@ -118,7 +118,7 @@ AOF 需要记录 Redis 的每个写命令，步骤为：命令追加（append）
 
 #### 命令追加(append)
 
-​		开启 AOF 功能后，服务器没执行一个写命令，都会把该命令以协议格式先追加到 ==aof_buf== 缓存区的末尾，而不是直接写入文件，避免每次由命令都直接写入硬盘，减少硬盘 IO 次数。
+​		开启 AOF 功能后，服务器没执行一个写命令，都会把该命令以协议格式先追加到 `aof_buf` 缓存区的末尾，而不是直接写入文件，避免每次由命令都直接写入硬盘，减少硬盘 IO 次数。
 
 
 
@@ -132,7 +132,7 @@ AOF 需要记录 Redis 的每个写命令，步骤为：命令追加（append）
 
 
 
-关于 AOF 的同步策略是设计到操作系统的 ==write== 函数和 ==fsync== 函数的。
+关于 AOF 的同步策略是设计到操作系统的 `write` 函数和 `fsync` 函数的。
 
 > 为了提高文件写入效率，在现代操作系统中，当用户调用`write`函数，将一些数据写入文件时，操作系统通常会将数据暂存到一个内存缓冲区里，当缓冲区的空间被填满或超过了指定时限后，才真正将缓冲区的数据写入到磁盘里。
 >
@@ -156,14 +156,14 @@ AOF 需要记录 Redis 的每个写命令，步骤为：命令追加（append）
 
 #### 重写命令
 
-​		可分为手动触发和自动触发，手动触发执行 ==bgrewriteaof== 命令，该命令的执行跟 ==bgsave== 触发快照时类似的，都是先 ==fork== 一个子进程做具体的工作。
+​		可分为手动触发和自动触发，手动触发执行 `bgrewriteaof` 命令，该命令的执行跟 `bgsave` 触发快照时类似的，都是先 `fork` 一个子进程做具体的工作。
 
 ```properties
 127.0.0.1:6379> bgrewriteaof
 Background append only file rewriting started
 ```
 
-​		自动触发会根据 ==auto-aof-rewrite-percentage== 和 ==auto-aof-rewrite-min-size 64mb== 配置来自动执行 ==bgrewriteaof== 命令
+​		自动触发会根据 `auto-aof-rewrite-percentage` 和 `auto-aof-rewrite-min-size 64mb` 配置来自动执行 `bgrewriteaof` 命令
 
 ```properties
 # 表示当AOF文件的体积大于64MB，且AOF文件的体积比上一次重写后的体积大了一倍（100%）时，会执行`bgrewriteaof`命令
@@ -176,17 +176,17 @@ auto-aof-rewrite-min-size 64mb
 #### bgrewriteaof 命令重写流程
 
 - 重写会有大量的写入操作，所以服务器进程会 fork 一个子进程来创建一个新的 AOF 文件。
-- 在重写期间，服务器进程继续处理命令请求，如果由写入的命令，追加到 `aof_buf` 的同事，还会追加到 ==aof_rewrite_buf== AOF重写缓冲区。
+- 在重写期间，服务器进程继续处理命令请求，如果由写入的命令，追加到 `aof_buf` 的同事，还会追加到 `aof_rewrite_buf` AOF重写缓冲区。
 - 当子进程完成重写之后，会给父进程一个信号，然后进程会把 AOF 重写缓冲区的内容写进新的 AOF 临时文件中，再对新的 AOF 文件改名完成替换，这样可以保证新的 AOF 文件与当前数据库数据的一致性。
 
 
 
 ## 数据恢复
 
-Redis 4.0 开始支持 RDB 和 AOF 的混合持久化（可以通过配置项 ==aof-use-rdb-preamble== 开启）
+Redis 4.0 开始支持 RDB 和 AOF 的混合持久化（可以通过配置项 `aof-use-rdb-preamble` 开启）
 
 - 如果是 redis 进程挂掉，那么重启 redis 进程即可，直接基于 AOF 日志文件恢复数据
-- 如果是 redis 进程挂掉，那么重启机器后，尝试重启 redis 进程，尝试直接基于 AOF 日志文件进行数据恢复，如果 AOF 文件破损，那么用 ==redis-check-aof fix== 命令修复。
+- 如果是 redis 进程挂掉，那么重启机器后，尝试重启 redis 进程，尝试直接基于 AOF 日志文件进行数据恢复，如果 AOF 文件破损，那么用 `redis-check-aof fix` 命令修复。
 - 如果没有 AOF 文件，回去加载 RDB 文件。
 - 如果 redis 当前最新的 AOF 和 RDB 文件出现了丢失/损坏，那么可以尝试基于该集器上当前的某个最新的 RDB 数据副本进行数据恢复。
 
