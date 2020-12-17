@@ -164,7 +164,7 @@ sentinel down-after-milliseconds <masterName> <timeout>
 
 
 
-Sentinel API
+#### Sentinel API
 
 > 默认情况下，sentinel 使用 tcp 端口 26379.
 
