@@ -14,7 +14,7 @@
 
   - 只要集群中大多数 master 可达，且失效的 master 至少有一个 slave 可达，即集群非 Fail 状态，集群都是可用的。
 
-    <img src="D:\note\redis\redis cluster.assets\image-20201217142256509.png" alt="image-20201217142256509" style="zoom: 67%;" />
+    <img src="/redis cluster.assets\image-20201217142256509.png" alt="image-20201217142256509" style="zoom: 67%;" />
 
   - Redis集群的replicas migration机制可以将拥有多个Slave的Master的某个Slave，迁移到没有Slave的Master下，即Slave分布相对平衡，确保Master都有一定数量的Slave备份。
 
