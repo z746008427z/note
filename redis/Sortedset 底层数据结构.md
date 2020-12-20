@@ -56,7 +56,7 @@ sortedset 同时会由两种数据结构支持，`ziplist` 和 `skiplist`。
 
 对有序链表进行`关键点`的提升，作为插入对比的索引。
 
-<img src="D:\note\redis\Sortedset 底层数据结构.assets\image-20201217223812246.png" alt="image-20201217223812246" style="zoom: 50%;" />
+<img src="/Sortedset 底层数据结构.assets\image-20201217223812246.png" alt="image-20201217223812246" style="zoom: 50%;" />
 
 #### 插入逻辑
 
