@@ -26,6 +26,113 @@
 
 
 
+## synchronized 的使用
+
+可以使用 `synchronized` 及 `Object` 中的配套方法 `wait()/notify() 、 wait()/notifyAll` 来实现线程的通信。
+
+synchronized 保证了线程对变量访问的 **可见性** 和 **排他性**。
+
+
+
+## synchronized 等待/通知机制
+
+如果使用 synchronized 来实现线程间的通信，我们需要结合 Object 中的配套方法 `wait()/notify() 、 wait()/notifyAll`。
+
+| wait()          | 调用该方法的线程进入 `WAITING` 状态，只有等待另外线程的通知或被中断才会返回，需要注意，线程调用 wait() 方法前，需要获得对象的监视器。当调用 wait() 方法后，会释放对象的监视器 |
+| :-------------- | :----------------------------------------------------------: |
+| 方法名称        |                             描述                             |
+| wait(long)      | 调用该方法的线程进入 `TIMED_WAITING` 状态，这里的参数时间是毫秒，等待对应毫秒事件，如果没有收到其他线程通知，则超时返回 |
+| wait(long, int) | 调用该方法的线程进入 `TIMED_WAITING` 状态，基本作用同 wait(long)，第二个参数代表为纳秒，也就是等待时间为毫秒+纳秒。 |
+| notify()        | 通知一个在对象监视器上等待的线程，使其从 wait() 方法返回，而返回的前提是该线程获取到了对象的监视器。 |
+| notifyAll()     |   通知所有在监视器上等待的线程，具体唤醒那个线程由CPU决定    |
+
+​		使用 Object 的 wait() / notify()、wait() / notifyall() ，其实是我们经常使用的 `等待/通知机制`，所谓的 等待/通知机制 是指一个线程 A 调用了对象 O 的 wait() 方法进入等待状态，而另一个线程 B 调用了对象 O 的 notify 或者 notifyAll 方法。线程 A 收到通知后从对象 O 的 wait() 方法返回，进而执行后续的操作。
+
+#### 结论
+
+- 使用 wait()、notify() 和 notifyAll 时需要先获取对象的监视器（执行 monitorenter 指令成功）
+- 调用 wait() 方法后，线程状态由 **RUNNING** 变为 **WAITING**，并将该线程加入等待队列。
+- notify() 或 notifyAll() 方法调用后，等待线程依旧不会从 wait() 返回，需要调用 notify() 或 notfifyAll() 的线程释放对象的监视器（也就是执行 monitorexit 指令）后，等待线程才会有机会从wait()返回。
+- notify() 方法将等待队列中的一个等待线程从等待队列移到同步队列中，而 notifyAll() 方法则是将等待队列中所有的线程全部移动到同步队列，被移动的线程状态由 **WAITING** 变为 **BLOCKED** 。
+- 从 wait() 方法返回的前提是获得了调用对象的监视器 (执行 monitorenter 指令成功）。
+
+
+
+## Lock 等待/通知机制
+
+```java
+class LockDemo {
+
+    static boolean flag = true;
+    static Lock lock = new ReentrantLock();
+    static Condition codition = lock.newCondition();
+
+
+    public static void main(String[] args) throws InterruptedException {
+        new Thread(new WaitRunnable(), "WaitThread").start();
+        TimeUnit.SECONDS.sleep(1);//这里睡眠，是保证Wait线程先执行
+        new Thread(new NotifyRunnable(), "NotifyThread").start();
+    }
+
+    static class WaitRunnable implements Runnable {
+        @Override
+        public void run() {
+            lock.lock();
+            try {
+                while (flag) {
+                    String name = Thread.currentThread().getName();
+                    System.out.println(name + "--->wait in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                    codition.await();
+                    System.out.println(name + "--->wake up in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+
+        }
+    }
+
+    static class NotifyRunnable implements Runnable {
+        @Override
+        public void run() {
+            lock.lock();
+            try {
+                String name = Thread.currentThread().getName();
+                System.out.println(name + "--->notify all in " + new SimpleDateFormat("HH:mm:ss").format(new Date()));
+                flag = false;
+                codition.signalAll();
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+}
+```
+
+
+
+## 等待/通知经典范式
+
+#### 等待方
+
+等待方应遵循如下原则：
+
+1. 获取对象的锁。
+2. 如果条件不满足，调用对象的 wait() 方法， 被通知后仍然要检查条件。
+3. 条件满足则执行响应逻辑。
+
+#### 通知方
+
+通知方应遵循如下原则：
+
+1. 获得对象的锁。
+2. 改变条件。
+3. 通知所有等待在对象上的线程。
+
+
+
 ## synchronized 与 Lock 区别
 
 | 类别     | synchronized                                                 | Lock                                                         |
