@@ -1,3 +1,61 @@
+## 常用命令
+
+- 从远程抽取镜像名
+
+    ```shell
+    docker pull 镜像名<:tags>
+    ```
+
+- 查看本地镜像
+
+    ```shell
+    docker images
+    ```
+
+- 创建容器，启动应用
+
+    ```shell
+    docker run 镜像名<:tags>
+    # 前面是宿主机端口:容器内部8080端口
+    docker run -p 8000:8080 tomcat
+    # -d 代表后台运行
+    docker run -p 8000:8080 -d tomcat
+    ```
+
+- 查看正在运行中得镜像
+
+    ```shell
+    docker ps
+    ```
+
+- 删除容器
+
+    ```shell
+    docker rm <-f> 容器id
+    ```
+
+- 删除指定版本得镜像
+
+    ``````shell
+    docker rmi <-f> 镜像名:<tags>
+    ``````
+
+- 优雅停止正在运行的容器
+
+    ```shell
+    docker stop 容器id
+    ```
+
+    
+
+
+
+
+
+
+
+
+
 ## 容器命令
 
 **使用 docker container my_command**
@@ -137,8 +195,6 @@
     ```
 
     
-
-
 
 ## 容器&镜像
 
