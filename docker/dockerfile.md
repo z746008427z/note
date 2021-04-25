@@ -42,13 +42,32 @@
 
 ​		格式为 FROM image 或 From image:tag，dockerfile 中第一条指令必须是 FROM 指令，且在同一个 dockerfile 中创建多个镜像时可以使用多个 FROM 指令。
 
+```shell
+# 制作基准镜像（基于centos:lastest）
+FROM centos
+# 不依赖任何基准镜像 base image
+FROM scratch
+```
+
 #### MAINTAINER
 
 ​		运维人员/维护人员 —— 维护者信息
 
+#### LABEL
+
+​		基础描述信息
+
 #### RUN
 
 ​		你想让他做什么
+
+```shell
+# shell 命令格式
+RUN yum install -y vim
+
+# exec 命令格式
+RUN ["yum","install","-y","vim"]
+```
 
 #### CMD
 

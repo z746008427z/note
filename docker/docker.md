@@ -16,6 +16,30 @@
 
 ![image-20210425002430742](docker.assets/image-20210425002430742.png)
 
+#### docker内部结构
+
+```shell
+# 进入容器内部
+docker exec -it 容器id /bin/bash
+
+# 查看linux内核版本
+cat /proc/version
+
+# 退出
+exit
+
+# 镜像容器默认存放目录
+cd /ver/lib/docker
+```
+
+
+
+#### 容器生命周期
+
+![image-20210425225746414](docker.assets/image-20210425225746414.png)
+
+
+
 
 
 ## docker 安装
@@ -56,33 +80,19 @@ docker run hello-world
 
 
 
+## dockerfile 构建镜像
+
+````shell
+docker build -t 企业名/镜像名:<tags>
+docker build -t mashibing.com/mywebapp:1.0
+
+docker run -d -p 8001:8080 test.com/mywebapp:1.0 /usr/image/fist-dockerfile/
+# 如果在当前目录 .
+docker rum -d -p 8001:8080 test.com/mywebapp:1.0 .
+````
 
 
 
+## 镜像分层
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+​		每执行一步，都会创建一个临时容器。
