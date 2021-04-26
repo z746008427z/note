@@ -40,6 +40,32 @@ cd /ver/lib/docker
 
 
 
+#### dockerfile 运行指令
+
+docker build：创建镜像
+
+​		RUN执行，在构建镜像时执行命令
+
+docker run：创建容器
+
+​		CMD|ENTRYPOINT，在容器创建时执行命令
+
+
+
+#### shell 运行方式
+
+​		使用 shell 执行时，当前 shell 是父进程，生成一个子 shell 进程。
+
+​		在子shell中执行脚本。脚本执行完毕，退出子shell，回到当前 shell。
+
+![image-20210426083036497](docker.assets/image-20210426083036497.png)
+
+#### exec 运行方式
+
+​		使用 exec 方式，会用 exec 进程替换当前进程，并且保持 PID 不变。
+
+​		执行完毕，直接退出，并不会退回之前的进程环境。
+
 
 
 ## docker 安装
@@ -96,3 +122,6 @@ docker rum -d -p 8001:8080 test.com/mywebapp:1.0 .
 ## 镜像分层
 
 ​		每执行一步，都会创建一个临时容器。
+
+
+
