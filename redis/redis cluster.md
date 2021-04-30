@@ -14,7 +14,7 @@
 
   - 只要集群中大多数 master 可达，且失效的 master 至少有一个 slave 可达，即集群非 Fail 状态，集群都是可用的。
 
-    <img src="/redis cluster.assets\image-20201217142256509.png" alt="image-20201217142256509" style="zoom: 67%;" />
+    <img src="redis cluster.assets\image-20201217142256509.png" alt="image-20201217142256509" style="zoom: 67%;" />
 
   - Redis集群的replicas migration机制可以将拥有多个Slave的Master的某个Slave，迁移到没有Slave的Master下，即Slave分布相对平衡，确保Master都有一定数量的Slave备份。
 
@@ -53,7 +53,7 @@ ad1334bd09ee73fdeb7b8f16194550fc2bf3a038 10.9.42.37:6102 myself,master - 0 0 8 c
 
 #### Cluster BUS
 
-​		每个 node 都有一个特定的 TCP 端口，用来接收其他 nodes 的链接；此端口号为面向 client 的端口号 +10000，比如客户端端口号为 `6379`，那么此 node 的 BUS 端口号为 `16379`，**客户端端口号可以在配置文件中声明**。由此可见，nodes 之间的交互通讯是通过 Bus端口进行，使用了特定的二进制协议，此端口通常应该只对 nodes 可用，可以借助防火墙技术来屏蔽其他非法访问。
+​		每个 node 都有一个特定的 zTCP 端口，用来接收其他 nodes 的链接；此端口号为面向 client 的端口号 +10000，比如客户端端口号为 `6379`，那么此 node 的 BUS 端口号为 `16379`，**客户端端口号可以在配置文件中声明**。由此可见，nodes 之间的交互通讯是通过 Bus端口进行，使用了特定的二进制协议，此端口通常应该只对 nodes 可用，可以借助防火墙技术来屏蔽其他非法访问。
 
 
 
